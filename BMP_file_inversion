@@ -1,24 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define input "C:\Users\Maxva\OneDrive\PXL\1EA A\Semester 2\C-programmeren\semester opdrachten\BMP\BMP_file_invert\input.bmp";
+#define output "C:\Users\Maxva\OneDrive\PXL\1EA A\Semester 2\C-programmeren\semester opdrachten\BMP\BMP_file_invert\output.bmp";
 
 int main()
 {
-    FILE *input = NULL;
+    FILE *InputFile = NULL;
 
-    input = fopen("input.bmp", "rb"); // open de BMP file die geinverteerd moet worden in readable binary mode
-    if(input == NULL)
+    InputFile = fopen("input", "rb"); // open de BMP file die geinverteerd moet worden in readable binary mode
+    if(InputFile == NULL)
         {
-        printf("Kan bestand niet openen/n/n");
+        printf("Kan bestand niet openen\n\n");
         exit(EXIT_FAILURE);
         }
 
-    FILE *output = NULL;
+    FILE *OutputFile = NULL;
 
-    output = fopen("input.bmp", "wb"); //open/maak de file waar de geinverteerde BMP opgeslagen wordt
-    if(input == NULL)
+    OutputFile = fopen("output", "wb"); //open/maak de file waar de geinverteerde BMP opgeslagen wordt
+    if(OutputFile == NULL)
         {
-        printf("Kan bestand niet openen/n/n");
+        printf("Kan bestand niet aanmaken\n\n");
         exit(EXIT_FAILURE);
         }
+
+    fclose(InputFile);
+    fclose(OutputFile);
+    return 0;
 }
