@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int main()
+{
+    FILE *input = NULL;
+
+    input = fopen("input.bmp", "rb"); // open de BMP file die geinverteerd moet worden in readable binary mode
+    if(input == NULL)
+        {
+        printf("Kan bestand niet openen/n/n");
+        exit(EXIT_FAILURE);
+        }
+
+    FILE *output = NULL;
+
+    output = fopen("input.bmp", "wb"); //open/maak de file waar de geinverteerde BMP opgeslagen wordt
+    if(input == NULL)
+        {
+        printf("Kan bestand niet openen/n/n");
+        exit(EXIT_FAILURE);
+        }
+}
