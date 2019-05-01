@@ -1,0 +1,4 @@
+//uitgangspinnen aanmaken
+const int shiftClockPin = 3;  //SH
+const int latchClockPin = 4;  //ST
+const int serialInputPin = 9; //DS
