@@ -1,27 +1,87 @@
 #include <stdio.h>
 #include <stdlib.h>
+#pragma pack(1)                                 //Geeft compiler commando om bepaalde padding te gerbuiken https://stackoverflow.com/questions/3318410/pragma-pack-effect
 
-#define input "C:\Users\Maxva\OneDrive\PXL\1EA A\Semester 2\C-programmeren\semester opdrachten\BMP\BMP_file_invert\input.bmp";
-#define output "C:\Users\Maxva\OneDrive\PXL\1EA A\Semester 2\C-programmeren\semester opdrachten\BMP\BMP_file_invert\output.bmp";
+#define input "C:\Users\Maxva\Desktop\input.bmp"
+#define output "C:\Users\Maxva\Desktop\output.bmp"
+
+typedef struct
+{
+    unsigned short int type;
+    unsigned int size;                          // Grootte van de file
+    unsigned short int reserved1, reserved2;
+    unsigned int offset;
+}Header;
+
+typedef struct
+{
+    unsigned int size;                          //Groote van de info header in bytes
+    long width,height;                          //Hoogte en breedte van de bitmap
+    unsigned short int planes;                  //aantal kleuren planes
+    unsigned short int bits;                    //aantsal bits per pixel
+    unsigned int compression;                   //soort compressie
+    unsigned int imagesize;                     //grootte foto in bytes
+    int xresolution,yresolution;                //aantal pixels in x/y-as
+    unsigned int ncolours;                      //aantal kleuren
+    unsigned int importantcolours;              //belangrijke kleuren
+}InfoHeader;
+
+typedef struct
+{
+    int rgbtBlue;
+    int rgbtGreen;
+    int rgbtRed;
+}RGB;
+
 
 int main()
 {
     FILE *InputFile = NULL;
-
-    InputFile = fopen("input", "rb"); // open de BMP file die geinverteerd moet worden in readable binary mode
+    InputFile = fopen("input.bmp", "rb");           // open de BMP file in readable binary mode
     if(InputFile == NULL)
         {
-        printf("Kan bestand niet openen\n\n");
+        printf("ERROR 404: File not found\n\n");
         exit(EXIT_FAILURE);
         }
 
     FILE *OutputFile = NULL;
-
-    OutputFile = fopen("output", "wb"); //open/maak de file waar de geinverteerde BMP opgeslagen wordt
+    OutputFile = fopen("output.bmp", "wb");         //open/maak de file waar de geinverteerde BMP opgeslagen wordt in writable binary mode.
     if(OutputFile == NULL)
         {
         printf("Kan bestand niet aanmaken\n\n");
         exit(EXIT_FAILURE);
+        }
+
+    Header FileHead;
+    InfoHeader infoHead;
+
+    fread(&FileHead, sizeof(Header), 1, InputFile);         //Leest Header info van input.bmp
+    fread(&infoHead, sizeof(InfoHeader), 1, InputFile);     //Leest InfoHeader info van input.bmp
+
+    fwrite(&FileHead, sizeof(Header), 1, OutputFile);       //Schrijft Header info naar output.bmp
+    fwrite(&infoHead, sizeof(InfoHeader), 1, OutputFile);   //schrijft InfoHeader info naar output.bmp
+
+    int padding = (4 - (infoHead.width * sizeof(RGB)) % 4) % 4;
+
+        int i, j, k, height;
+
+        for(i = 0, height = abs(infoHead.height); i < height; i++)
+        {
+            for(j = 0; j < infoHead.width; j++)
+            {
+            RGB triple;
+
+            fread(&triple, sizeof(RGB), 1, InputFile);
+
+            fwrite(&triple, sizeof(RGB), 1, OutputFile);
+            }
+        }
+
+        fseek(InputFile, padding, SEEK_CUR);
+
+        for(k = 0; k < padding; k++)
+        {
+            fputc(0x00, OutputFile);
         }
 
     fclose(InputFile);
