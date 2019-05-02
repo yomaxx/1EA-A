@@ -1,4 +1,109 @@
-//uitgangspinnen aanmaken
-const int shiftClockPin = 3;  //SH
-const int latchClockPin = 4;  //ST
-const int serialInputPin = 9; //DS
+#include <TimerOne.h>
+
+//uitgangspinnen aanmaken + Snelheidsregelaar d.m.v. Pottmeter
+
+int st = 1;
+int ds = 2;
+int sh = 3;
+
+
+int pot = A1;
+int pot2 = A2;
+
+int value;
+int val;
+unsigned long int snelheid = 100000;
+
+int state = LOW;
+volatile unsigned long count = 0;
+
+void writeMatrix(uint16_t waarde);
+int encodeMatrix(int matrix);
+
+void setup() 
+{
+  pinMode(st, OUTPUT);
+  pinMode(sh, OUTPUT);
+  pinMode(ds, OUTPUT);
+
+  pinMode(pot, INPUT);
+  pinMode(pot2, INPUT);
+}
+
+int pxl(int count);
+
+void loop() 
+
+{
+
+  value = analogRead(pot);
+
+  if (value <= 100)
+
+    {
+    snelheid = 50000;
+    } 
+  
+  else if (value <= 200)
+    {
+    snelheid = 100000;
+    } 
+  
+  else if (value <= 300)
+    {
+    snelheid = 170000;
+    } 
+  
+  else if (value <= 400)
+    {
+    snelheid = 230000;
+    } 
+  
+  else if (value <= 500)
+    {
+    snelheid = 300000;
+    } 
+  
+  else if (value <= 600)
+    {
+    snelheid = 350000;
+    } 
+  
+  else if (value <= 700)
+    {
+    snelheid = 400000;
+    } 
+  
+  else if (value <= 800)
+    {
+    snelheid = 430000;
+    } 
+    
+  else if (value <= 900)
+    {
+    snelheid = 470000;
+    } 
+  
+  else if (value > 900)
+    {
+    snelheid = 500000;
+    }
+  
+  Timer1.initialize(snelheid);
+  Timer1.attachInterrupt(tim); 
+  
+  unsigned long copy;
+
+  noInterrupts();
+  copy = count;
+  interrupts();
+
+  val = analogRead(pot2);
+
+  if (val <= 500)
+    {
+    pxl(count);    
+    }
+  
+
+}
