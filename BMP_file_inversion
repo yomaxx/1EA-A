@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #pragma pack(1)                                 //Geeft compiler commando om bepaalde padding te gerbuiken https://stackoverflow.com/questions/3318410/pragma-pack-effect
 
-#define input "C:\Users\Maxva\Desktop\input.bmp"
-#define output "C:\Users\Maxva\Desktop\output.bmp"
+#define input "C:\\Users\\Maxva\\Desktop\\input.bmp"
+#define output "C:\\Users\\Maxva\\Desktop\\output.bmp"
 
 typedef struct
 {
