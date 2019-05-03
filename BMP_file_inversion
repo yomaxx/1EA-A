@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#pragma pack(1)                                 //Geeft compiler commando om bepaalde padding te gerbuiken https://stackoverflow.com/questions/3318410/pragma-pack-effect
+#pragma pack(1)                                 //Geeft compiler commando om bepaalde padding te gerbuiken
 
-#define input "C:\Users\Maxva\Desktop\input.bmp"
-#define output "C:\Users\Maxva\Desktop\output.bmp"
+#define input "C:\\Users\\Maxva\\Desktop\\input.bmp"
+#define output "C:\\Users\\Maxva\\Desktop\\output.bmp"
 
 typedef struct
 {
@@ -28,16 +28,23 @@ typedef struct
 
 typedef struct
 {
-    int rgbtBlue;
-    int rgbtGreen;
-    int rgbtRed;
+    int Red;
+    int Green;
+    int Blue;
 }RGB;
+
+/*typedef struct
+{
+    unsigned char Blue;
+    unsigned char Green;
+    unsigned char Red;
+}RGB; */
 
 
 int main()
 {
     FILE *InputFile = NULL;
-    InputFile = fopen("input.bmp", "rb");           // open de BMP file in readable binary mode
+    InputFile = fopen(input, "rb");           // open de BMP file in readable binary mode
     if(InputFile == NULL)
         {
         printf("ERROR 404: File not found\n\n");
@@ -45,7 +52,7 @@ int main()
         }
 
     FILE *OutputFile = NULL;
-    OutputFile = fopen("output.bmp", "wb");         //open/maak de file waar de geinverteerde BMP opgeslagen wordt in writable binary mode.
+    OutputFile = fopen(output, "wb");         //open/maak de file waar de geinverteerde BMP opgeslagen wordt in writable binary mode.
     if(OutputFile == NULL)
         {
         printf("Kan bestand niet aanmaken\n\n");
@@ -61,30 +68,51 @@ int main()
     fwrite(&FileHead, sizeof(Header), 1, OutputFile);       //Schrijft Header info naar output.bmp
     fwrite(&infoHead, sizeof(InfoHeader), 1, OutputFile);   //schrijft InfoHeader info naar output.bmp
 
-    int padding = (4 - (infoHead.width * sizeof(RGB)) % 4) % 4;
+    //int padding = (4 - (infoHead.width * sizeof(RGB)) % 4) % 4;   //Niet nodig volgens mij
 
         int i, j, k, height;
 
-        for(i = 0, height = abs(infoHead.height); i < height; i++)
+        for(i = 0, height = abs(infoHead.height); i < height; i++)  //Gaat elke pixel in de Y-as af.
         {
-            for(j = 0; j < infoHead.width; j++)
+            for(j = 0; j < infoHead.width; j++)                     //Gaat alke pixel in de X-as af voor elke pixel in de hoogte.
             {
             RGB triple;
 
             fread(&triple, sizeof(RGB), 1, InputFile);
 
+            printf("%d\n", triple.Red);
+            printf("%d\n", triple.Green);
+            printf("%d\n\n", triple.Blue);
+            /*triple.Red = 255 - triple.Red;
+            triple.Green = 255 - triple.Green;
+            triple.Blue = 255 - triple.Blue;
+            */
+
             fwrite(&triple, sizeof(RGB), 1, OutputFile);
             }
         }
 
-        fseek(InputFile, padding, SEEK_CUR);
+        /*fseek(InputFile, padding, SEEK_CUR);  //Niet nodig volgens mij
 
-        for(k = 0; k < padding; k++)
+        for(k = 0; k < padding; k++)            //NIet nodig volgens mij
         {
             fputc(0x00, OutputFile);
-        }
+        }*/
 
-    fclose(InputFile);
+
+    fclose(InputFile);      //De geopende files weer sluiten
     fclose(OutputFile);
     return 0;
 }
+
+/////////////////////////////////////////////////////////////////////////
+//      bronvermelding:
+//
+//      https://stackoverflow.com/questions/3318410/pragma-pack-effect  - Voor padding en juist compileren.
+//      http://paulbourke.net/dataformats/bmp/                          - Voor struct header en info header
+//
+//
+//
+//
+//
+//
