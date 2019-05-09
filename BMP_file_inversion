@@ -1,3 +1,20 @@
+/*
+* Auteur 1: Max Valkenburg 
+* Auteur 2: Mark Verhagen
+* Link naar github repository: https://github.com/yomaxx/1EA-A/blob/master/BMP_file_inversion
+*/
+
+//////////////////////////////////////////////////////////////////////////////////////
+//                              bronvermelding:                                     //
+//                                                                                  //
+//      https://stackoverflow.com/questions/3318410/pragma-pack-effect              //
+//      http://paulbourke.net/dataformats/bmp/                                      //
+//      https://stackoverflow.com/questions/9296059/read-pixel-value-in-bmp-file    //
+//                                                                                  //
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -95,13 +112,3 @@ int main()
     fclose(OutputFile);
     return 0;
 }
-
-//////////////////////////////////////////////////////////////////////////////////////
-//                              bronvermelding:                                     //
-//                                                                                  //
-//      https://stackoverflow.com/questions/3318410/pragma-pack-effect              //
-//      http://paulbourke.net/dataformats/bmp/                                      //
-//      https://stackoverflow.com/questions/9296059/read-pixel-value-in-bmp-file    //
-//                                                                                  //
-//////////////////////////////////////////////////////////////////////////////////////
-
