@@ -94,14 +94,9 @@ int main()
 
             fread(&triple, sizeof(RGB), 1, InputFile);
 
-            /*printf("i=%d j=%d\n", i,j);
-            printf("%d\n", triple.Red);
-            printf("%d\n", triple.Green);
-            printf("%d\n\n", triple.Blue);*/
             triple.Red = 255 - triple.Red;
             triple.Green = 255 - triple.Green;
             triple.Blue = 255 - triple.Blue;
-
 
             fwrite(&triple, sizeof(RGB), 1, OutputFile);
             }
