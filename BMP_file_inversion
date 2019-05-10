@@ -30,11 +30,8 @@ typedef struct      //info voor header
     unsigned int size;
     unsigned short int reserved1, reserved2;
     unsigned int offset;
-}Header;
 
-typedef struct      //info voor infoheader
-{
-    unsigned int size;
+    unsigned int size2;
     long width,height;
     unsigned short int planes;
     unsigned short int bits;
@@ -45,7 +42,7 @@ typedef struct      //info voor infoheader
     unsigned int importantcolours;
 }InfoHeader;
 
-typedef struct      //voor kleuren op te slaan
+typedef struct      //voor kleuren
 {
     unsigned char Blue;
     unsigned char Green;
@@ -71,46 +68,33 @@ int main()
         exit(EXIT_FAILURE);
         }
 
-    Header FileHead;
+
     InfoHeader infoHead;
 
-    fread(&FileHead, sizeof(Header), 1, InputFile);         //Leest Header info van input.bmp
+    int x,y,z;
     fread(&infoHead, sizeof(InfoHeader), 1, InputFile);     //Leest InfoHeader info van input.bmp
-
-    fwrite(&FileHead, sizeof(Header), 1, OutputFile);       //Schrijft Header info naar output.bmp
     fwrite(&infoHead, sizeof(InfoHeader), 1, OutputFile);   //schrijft InfoHeader info naar output.bmp
 
-        for(int i = 0; i < infoHead.height; i++)  //Gaat elke pixel in de Y-as af.
+    x = infoHead.width;
+    y = infoHead.height;
+
+    fseek(InputFile,18, SEEK_SET);              //Naar locatie width gaan
+    fread(&infoHead.width, 4, 1, InputFile);    //width uitlezen
+    fread(&infoHead.height, 4, 1, InputFile);
+
+    z = infoHead.width;
+    infoHead.width = x;
+    x = z;
+
+    z = infoHead.height;
+    infoHead.height = y;
+    y = z;
+
+    fseek(InputFile,5,SEEK_SET);
+
+        for(int i = 0; i < y; i++)  //Gaat elke pixel in de Y-as af.
         {
-            for(int j = 0; j < infoHead.width; j++)                     //Gaat alke pixel in de X-as af voor elke pixel in de hoogte.
-            {
-            RGB triple;
-
-            fread(&triple, sizeof(RGB), 1, InputFile);      //Leest de RGB waardes van de inputfile
-
-            triple.Red = 255 - triple.Red;                  //Hier worden de RGB waardes geinverteerd
-            triple.Green = 255 - triple.Green;
-            triple.Blue = 255 - triple.Blue;
-
-            fwrite(&triple, sizeof(RGB), 1, OutputFile);    //Schrijft de RGB waardes naar de outfile
-            }
-        }
-
-    fclose(InputFile);      //De geopende files weer sluiten
-    fclose(OutputFile);
-    return 0;
-}
-
-
-    fread(&FileHead, sizeof(Header), 1, InputFile);         //Leest Header info van input.bmp
-    fread(&infoHead, sizeof(InfoHeader), 1, InputFile);     //Leest InfoHeader info van input.bmp
-
-    fwrite(&FileHead, sizeof(Header), 1, OutputFile);       //Schrijft Header info naar output.bmp
-    fwrite(&infoHead, sizeof(InfoHeader), 1, OutputFile);   //schrijft InfoHeader info naar output.bmp
-
-        for(int i = 0; i < infoHead.height; i++)            //Gaat elke pixel in de Y-as af.
-        {
-            for(int j = 0; j < infoHead.width; j++)         //Gaat elke pixel in de X-as af voor elke pixel in de hoogte.
+            for(int j = 0; j < x; j++)                     //Gaat alke pixel in de X-as af voor elke pixel in de hoogte.
             {
             RGB triple;
 
