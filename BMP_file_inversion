@@ -1,17 +1,20 @@
+
 /*
-* Auteur 1: Max Valkenburg 
+* Auteur 1: Max Valkenburg
 * Auteur 2: Mark Verhagen
 * Link naar github repository: https://github.com/yomaxx/1EA-A/blob/master/BMP_file_inversion
 */
 
-//////////////////////////////////////////////////////////////////////////////////////
-//                              bronvermelding:                                     //
-//                                                                                  //
-//      https://stackoverflow.com/questions/3318410/pragma-pack-effect              //
-//      http://paulbourke.net/dataformats/bmp/                                      //
-//      https://stackoverflow.com/questions/9296059/read-pixel-value-in-bmp-file    //
-//                                                                                  //
-//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                      bronvermelding:                                                 //
+//                                                                                                      //
+//      https://stackoverflow.com/questions/3318410/pragma-pack-effect                                  //
+//      http://paulbourke.net/dataformats/bmp/                                                          //
+//      https://stackoverflow.com/questions/9296059/read-pixel-value-in-bmp-file                        //
+//      https://stackoverflow.com/questions/23725180/pixel-manipulation-on-bitmap-file-in-c             //
+//      https://cboard.cprogramming.com/c-programming/56135-reading-bitmap-file-header-problem.html     //
+//                                                                                                      //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -21,55 +24,48 @@
 #define input "C:\\Users\\Maxva\\Desktop\\input.bmp"
 #define output "C:\\Users\\Maxva\\Desktop\\output.bmp"
 
-typedef struct
+typedef struct      //info voor header
 {
     unsigned short int type;
-    unsigned int size;                          // Grootte van de file
+    unsigned int size;
     unsigned short int reserved1, reserved2;
     unsigned int offset;
 }Header;
 
-typedef struct
+typedef struct      //info voor infoheader
 {
-    unsigned int size;                          //Groote van de info header in bytes
-    long width,height;                          //Hoogte en breedte van de bitmap
-    unsigned short int planes;                  //aantal kleuren planes
-    unsigned short int bits;                    //aantsal bits per pixel
-    unsigned int compression;                   //soort compressie
-    unsigned int imagesize;                     //grootte foto in bytes
-    int xresolution,yresolution;                //aantal pixels in x/y-as
-    unsigned int ncolours;                      //aantal kleuren
-    unsigned int importantcolours;              //belangrijke kleuren
+    unsigned int size;
+    long width,height;
+    unsigned short int planes;
+    unsigned short int bits;
+    unsigned int compression;
+    unsigned int imagesize;
+    int xresolution,yresolution;
+    unsigned int ncolours;
+    unsigned int importantcolours;
 }InfoHeader;
 
-typedef struct
-{
-    int Blue;
-    int Green;
-    int Red;
-}RGB;
-
-/*typedef struct
+typedef struct      //voor kleuren op te slaan
 {
     unsigned char Blue;
     unsigned char Green;
     unsigned char Red;
-}RGB;*/
+}RGB;
 
 
 int main()
 {
     FILE *InputFile = NULL;
-    InputFile = fopen(input, "rb");           // open de BMP file in readable binary mode
-    if(InputFile == NULL)
+    InputFile = fopen(input, "rb");             //open de BMP file in readable binary mode
+    if(InputFile == NULL)                       //Als er geen input.bmp gevonden wordt sluit het programma
         {
         printf("ERROR 404: File not found\n\n");
         exit(EXIT_FAILURE);
         }
 
     FILE *OutputFile = NULL;
-    OutputFile = fopen(output, "wb");         //open/maak de file waar de geinverteerde BMP opgeslagen wordt in writable binary mode.
-    if(OutputFile == NULL)
+    OutputFile = fopen(output, "wb");           //open/maak de file waar de geinverteerde BMP opgeslagen wordt in writable binary mode.
+    if(OutputFile == NULL)                      //Als output.bmp niet gevonden/gemaakt kan worden sluit het programma.
         {
         printf("Kan bestand niet aanmaken\n\n");
         exit(EXIT_FAILURE);
@@ -84,24 +80,49 @@ int main()
     fwrite(&FileHead, sizeof(Header), 1, OutputFile);       //Schrijft Header info naar output.bmp
     fwrite(&infoHead, sizeof(InfoHeader), 1, OutputFile);   //schrijft InfoHeader info naar output.bmp
 
-        int i, j, height;
-
-        for(i = 0, height = abs(infoHead.height); i < height; i++)  //Gaat elke pixel in de Y-as af.
+        for(int i = 0; i < infoHead.height; i++)  //Gaat elke pixel in de Y-as af.
         {
-            for(j = 0; j < infoHead.width; j++)                     //Gaat alke pixel in de X-as af voor elke pixel in de hoogte.
+            for(int j = 0; j < infoHead.width; j++)                     //Gaat alke pixel in de X-as af voor elke pixel in de hoogte.
             {
             RGB triple;
 
-            fread(&triple, sizeof(RGB), 1, InputFile);
+            fread(&triple, sizeof(RGB), 1, InputFile);      //Leest de RGB waardes van de inputfile
 
-            triple.Red = 255 - triple.Red;
+            triple.Red = 255 - triple.Red;                  //Hier worden de RGB waardes geinverteerd
             triple.Green = 255 - triple.Green;
             triple.Blue = 255 - triple.Blue;
 
-            fwrite(&triple, sizeof(RGB), 1, OutputFile);
+            fwrite(&triple, sizeof(RGB), 1, OutputFile);    //Schrijft de RGB waardes naar de outfile
             }
         }
 
+    fclose(InputFile);      //De geopende files weer sluiten
+    fclose(OutputFile);
+    return 0;
+}
+
+
+    fread(&FileHead, sizeof(Header), 1, InputFile);         //Leest Header info van input.bmp
+    fread(&infoHead, sizeof(InfoHeader), 1, InputFile);     //Leest InfoHeader info van input.bmp
+
+    fwrite(&FileHead, sizeof(Header), 1, OutputFile);       //Schrijft Header info naar output.bmp
+    fwrite(&infoHead, sizeof(InfoHeader), 1, OutputFile);   //schrijft InfoHeader info naar output.bmp
+
+        for(int i = 0; i < infoHead.height; i++)            //Gaat elke pixel in de Y-as af.
+        {
+            for(int j = 0; j < infoHead.width; j++)         //Gaat elke pixel in de X-as af voor elke pixel in de hoogte.
+            {
+            RGB triple;
+
+            fread(&triple, sizeof(RGB), 1, InputFile);      //Leest de RGB waardes van de inputfile
+
+            triple.Red = 255 - triple.Red;                  //Hier worden de RGB waardes geinverteerd
+            triple.Green = 255 - triple.Green;
+            triple.Blue = 255 - triple.Blue;
+
+            fwrite(&triple, sizeof(RGB), 1, OutputFile);    //Schrijft de RGB waardes naar de outfile
+            }
+        }
 
     fclose(InputFile);      //De geopende files weer sluiten
     fclose(OutputFile);
